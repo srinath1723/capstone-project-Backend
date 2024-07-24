@@ -1,7 +1,6 @@
 ## AirBnb Clone Application
 
 
-
 The application is built using the following technologies:
 
 1. Frontend:
