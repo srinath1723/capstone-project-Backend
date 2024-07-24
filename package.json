@@ -1,0 +1,29 @@
+{
+  "name": "capstone-project-backend",
+  "version": "1.0.0",
+  "description": "This is the capstone project (AirBnb Clone) application.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/srinath1723/capstone-project-Backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/srinath1723/capstone-project-Backend/issues"
+  },
+  "homepage": "https://github.com/srinath1723/capstone-project-Backend#readme",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.5.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
