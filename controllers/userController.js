@@ -1,7 +1,8 @@
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const transporter = require("../utils/transporter");
-const { EMAIL_ID } = require("../utils/config");
+const { EMAIL_ID, SECRET_KEY } = require("../utils/config");
 
 const userController = {
   // API for registering users
@@ -71,6 +72,65 @@ const userController = {
     } catch (error) {
       // Handling errors and sending an error response
       res.status(500).json({ message: "An error occurred while activating the user. Please try again later." });
+    }
+  },
+  // API for user login
+  login: async (req, res) => {
+    try {
+      // getting the user email and password from the request body
+      const { email, password } = req.body;
+
+      // checking if the user exists in the database
+      const user = await User.findOne({ email });
+
+      // if the user does not exist, return an error response
+      if (!user) {
+        return res.status(404).send({ message: "User not found" });
+      }
+
+      // if the user is not active, return an error response
+      if (!user.isActive) {
+        return res.status(403).send({ message: "User account is not active" });
+      }
+
+      // if the user exists check the password
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+
+      // if the password is invalid, return an error response
+      if (!isPasswordValid) {
+        return res.status(400).send({ message: "Invalid password" });
+      }
+
+      // generating a JWT token
+      const token = jwt.sign({ id: user._id }, SECRET_KEY);
+
+      // setting the token as a cookie
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        expires: new Date(Date.now() + 24 * 3600000), // 24 hours from login
+      });
+
+      // sending a success response
+      res.status(200).json({ message: "Login successful" });
+    } catch (error) {
+      // sending an error response
+      res.status(500).send({ message: error.message });
+    }
+  },
+
+  // API for user logout
+  logout: async (req, res) => {
+    try {
+      // clearing the cookie
+      res.clearCookie("token");
+
+      // sending a success response
+      res.status(200).send({ message: "Logged out successfully" });
+    } catch (error) {
+      // Sending an error response
+      res.status(500).send({ message: error.message });
     }
   },
 };
